@@ -46,13 +46,28 @@ pipeline {
          }
       }
 	  
-	  stage ('SonarQube analysis') {
+	       
+      
+	stage('Code Coverage') {
+        steps {
+            sh 'mvn clean cobertura:cobertura'
+        }
+        
+        post {
+	        always {
+	            step([$class: 'CoberturaPublisher', autoUpdateHealth: true, autoUpdateStability: true, coberturaReportFile: '**/target/site/cobertura/*.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 2, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: true])
+	        }
+	    }
+    }
+	
+	stage ('SonarQube analysis') {
          steps {
             withSonarQubeEnv(installationName: 'sonarQube Connect', credentialsId: 'a4e496bb-bdb8-4151-abdd-934973642375') {
                sh 'mvn clean sonar:sonar -Dsonar.login=$Login -Dsonar.password=$Password'
             }
          }
       }
+
 
 	}
 }
