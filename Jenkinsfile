@@ -1,20 +1,13 @@
 pipeline {
-	agent any
-	stages {
-	    stage("STAGE 1") {
-		 steps {
-			echo "first step"
-			echo "second step"
-		 }		 
-		}
-		stage("STAGE 2") {
-		 steps {
-			echo "first step"
-			echo "second step"
-		 }
-		}
-		
-		stage('Clone') {
+
+   agent any
+
+   tools{
+      maven 'mon_maven_auto'
+   }
+
+   stages {
+      stage('Clone') {
          steps {
             checkout([$class: 'GitSCM',
                 branches: [[name: '*/master' ]],
@@ -29,6 +22,28 @@ pipeline {
             sh "ls -lart ./*"
          }
       }
-
+	  stage('Compile'){
+         steps{
+            withMaven(maven:'mon_maven_auto')
+            {
+              sh "mvn compile"
+            }
+         }
+      }
+      stage('Test'){
+         steps{
+            withMaven(maven:'mon_maven_auto')
+            {
+              sh "mvn test"
+            }
+         }
+         
+      }
+      
+      stage('Build'){
+         steps{
+            sh "mvn -B -DskipTests clean install"
+         }
+      }
 	}
 }
