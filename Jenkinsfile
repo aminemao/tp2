@@ -45,5 +45,14 @@ pipeline {
             sh "mvn -B -DskipTests clean install"
          }
       }
+	  
+	  stage ('SonarQube analysis') {
+         steps {
+            withSonarQubeEnv(installationName: 'sonarQube Connect', credentialsId: 'a4e496bb-bdb8-4151-abdd-934973642375') {
+               sh 'mvn clean sonar:sonar -Dsonar.login=$Login -Dsonar.password=$Password'
+            }
+         }
+      }
+
 	}
 }
