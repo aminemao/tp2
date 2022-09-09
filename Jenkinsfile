@@ -5,12 +5,12 @@ pipeline {
 		 steps {
 			echo "first step"
 			echo "second step"
-		 }
-		 post {
+			post {
 			always {
 				echo "fin stage 1"
 			}
 		 }
+		 }		 
 		}
 		stage("STAGE 2") {
 		 steps {
